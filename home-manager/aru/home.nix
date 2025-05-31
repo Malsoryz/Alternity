@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 let
-  basePath = "~/Alternity";
+  homePath = "/home/aru";
+  basePath = "${homePath}/Alternity";
   hmFlakePath = "${basePath}/home-manager/aru";
   systemFlakePath = "${basePath}/system/nixos";
 in
@@ -38,6 +39,7 @@ in
     php
     php84Packages.composer
     nodejs_24
+    mariadb
     mycli
   ];
 
