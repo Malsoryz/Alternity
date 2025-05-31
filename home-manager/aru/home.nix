@@ -42,8 +42,9 @@ in
   ];
 
   home.shellAliases = {
+    # MUST USE THIS FOR REBUILD AND HOME-MANAGER SWITCH !!
     hm-switch = "home-manager switch --flake ${hmFlakePath}";
-    rebuild = "nixos-rebuild switch --flake ${systemFlakePath}";
+    rebuild = "sudo nixos-rebuild --flake ${systemFlakePath}";
 
     ls = "eza";
     la = "eza -a";
