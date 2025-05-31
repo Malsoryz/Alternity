@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 let
-  hmFlakePath = "~/Alternity/home-manager/aru";
+  basePath = "~/Alternity";
+  hmFlakePath = "${basePath}/home-manager/aru";
+  systemFlakePath = "${basePath}/system/nixos";
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -41,6 +43,7 @@ in
 
   home.shellAliases = {
     hm-switch = "home-manager switch --flake ${hmFlakePath}";
+    rebuild = "nixos-rebuild switch --flake ${systemFlakePath}";
 
     ls = "eza";
     la = "eza -a";
