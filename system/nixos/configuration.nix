@@ -11,10 +11,16 @@
     ];
 
   nix = {
+    package = pkgs.nix;
     settings.experimental-features = [
       "nix-command"
       "flakes"
     ];
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
   };
 
   # Bootloader.
@@ -125,7 +131,7 @@
     # SDDM Theme Package with litle config
     (pkgs.sddm-astronaut.override {
       themeConfig = {
-        FormPosition = "left";
+        "FormPosition" = "left";
       };
       embeddedTheme = "purple_leaves";
     })
