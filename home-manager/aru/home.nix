@@ -1,7 +1,6 @@
 { config, pkgs, ... }:
 let
-  homePath = "/home/aru";
-  basePath = "${homePath}/Alternity";
+  basePath = "$HOME/Alternity";
   hmFlakePath = "${basePath}/home-manager/aru";
   systemFlakePath = "${basePath}/system/nixos";
 in
@@ -14,17 +13,27 @@ in
       "nix-command"
       "flakes"
     ];
+    gc = {
+      automatic = true;
+      frequency = "weekly";
+      options = "--delete-older-than 7d";
+    };
   };
 
   home = {
     username = "aru";
     homeDirectory = "/home/aru";
+    shell.enableZshIntegration = true;
     stateVersion = "25.05";
   };
 
   home.packages = with pkgs; [
+    # Utilities and CLIs
     openssh
     fastfetch
+    android-tools
+    cava
+    htop
 
     # Desktop App
     google-chrome
@@ -32,6 +41,9 @@ in
     netbeans
     onlyoffice-desktopeditors
     obsidian
+    gparted
+    spotify
+    vlc
 
     # Programming
     openjdk
@@ -46,12 +58,17 @@ in
   home.shellAliases = {
     # MUST USE THIS FOR REBUILD AND HOME-MANAGER SWITCH !!
     hm-switch = "home-manager switch --flake ${hmFlakePath}";
-    rebuild = "sudo nixos-rebuild --flake ${systemFlakePath}";
+    rebuild = "sudo nixos-rebuild switch --flake ${systemFlakePath}";
 
     ls = "eza";
     la = "eza -a";
     lh = "eza -lh";
     lha = "eza -lha";
+
+    pisan = "php artisan";
+    pmi = "php artisan migrate";
+    pmi-f = "php artisan migrate:fresh";
+    pmi-r = "php artisan migrate:refresh";
 
     trash = "${pkgs.conceal}/bin/conceal";
     rm = "${pkgs.conceal}/bin/cnc";
@@ -69,16 +86,58 @@ in
     };
   };
 
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    dotDir = ".config/zsh";
+    dirHashes = {
+      "docs" = "$HOME/Documents";
+      "dotfiles" = "$HOME/.config";
+      "hm-conf" = "${hmFlakePath}";
+      "sys-conf" = "${systemFlakePath}";
+    };
+    history = {
+      share = true;
+      extended = true;
+      ignoreSpace = true;
+      size = 10000;
+    };
+  };
+
   programs.vscode.enable = true;
   programs.yt-dlp.enable = true;
 
-  services.podman.enable = true;
+  services.podman = {
+    enable = true;
+    autoUpdate = {
+      enable = true;
+      onCalendar = "Sun *-*-* 00:00:00";
+    };
+    settings.registries.search = [
+      "docker.io"
+      "ghcr.io"
+    ];
+  };
+  services.home-manager.autoExpire = {
+    enable = true;
+    frequency = "weekly";
+    store.cleanup = true;
+  };
 
   programs.kitty = {
     enable = true;
+    enableGitIntegration = true;
+    shellIntegration.enableZshIntegration = true;
     font = {
       name = "JetBrainsMono Nerd Font";
       package = pkgs.nerd-fonts.jetbrains-mono;
+    };
+    settings = {
+      "initial_window_width" = "80";
+      "initial_window_height" = "24";
+      "placement_strategy" = "center";
     };
   };
 
@@ -117,17 +176,6 @@ in
         ];
       };
     };
-  };
-
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-    #initExtra = ''
-    #  ${motd}/bin/my-motd
-    #'';
-    history.size = 10000;
   };
 
   programs.eza = {
