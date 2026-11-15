@@ -7,7 +7,7 @@
 }:
 let
   # Change into current path
-  configurationPath = "/home/alternity/dotfiles/Nix";
+  configurationPath = "/home/alternity/dotfiles";
 
   antigravity-code = pkgs.symlinkJoin {
     name = "antigravity-code";
